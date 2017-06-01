@@ -330,7 +330,8 @@ class XCStationData(object):
         # FIELD table
         ms.field.addrows(1)
         logging.info("Populating FIELD Table")
-        ms.field[0] = {"DELAY_DIR": np.array([[0.0,np.pi/2]]), "REFERENCE_DIR": np.array([[0.0,np.pi/2]]),
+        ms.field[0] = {"DELAY_DIR": np.array([[self.direction["m0"]["value"], self.direction["m1"]["value"]]]),
+                       "REFERENCE_DIR": np.array([[self.direction["m0"]["value"], self.direction["m1"]["value"]]]),
                        "PHASE_DIR": np.array([[self.direction["m0"]["value"], self.direction["m1"]["value"]]]),
                        "NAME": "Field0", "SOURCE_ID": -1, "TIME": time_mjd[0]}
         ms.field.putcolkeyword("PHASE_DIR", "QuantumUnits", [self.direction["m0"]["unit"], self.direction["m1"]["unit"]])
@@ -387,6 +388,31 @@ class AARTFAACData (XCStationData):
         self.vis = vism.TransitVis (datafile, nant, subband, nchan, 'lba_outer')
         print '<-- Record size: ', self.vis.recsize, ' Bytes.'
 
+##################### TODO: Units not matching, direction type can't be created
+##################### Please manually determine direction, and then use the 
+##################### --direction option to lofar-station-ms
+        # Setting direction to be the RA/DEC corresponding to zenith at the 
+        # time of the first data record.
+#        print '<-- NOTE: No phasing direction specified.'
+#        print '<-- Setting pointing to LST at ', self.vis.tfilestart.isoformat()
+#
+#        dm = measures()
+#
+#        # ITRF position of the first LBA_OUTER antenna in CS002 array.
+#        pos = dm.position ('ITRF',  \
+#                    '3826577.022720000m', '461022.995082000m', '5064892.814m')
+#        dm.do_frame (pos)
+#        tim = dm.epoch ('utc', quantity (self.vis.tfilestart.isoformat()))
+#        dm.do_frame (tim)
+#
+#        # direction is specified in J2000 RA/DEC. Here, the dec is the latitude
+#        # of AARTFAAC CS002, while the RA is the LST of the first timestamp.
+#        direction = dm.direction ('j2000', \
+#                quantity (dm.get_value (dm.measure (tim,'LAST'))[0]), 
+#                quantity ('52.54.54.440982'))
+        
+
+ 
         # NOTE: The subclass's overloaded functions are called from within the
         # base classes __init__()!
         super(AARTFAACData, self).__init__(self.vis, rcu_mode, self.vis.sub, \
