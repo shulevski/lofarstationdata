@@ -368,7 +368,7 @@ class AARTFAACData (XCStationData):
     trilind = None
     acm     = None # Temporary store of a single ACM.
 
-    def __init__(self, datafile, rcu_mode, subband=-1, nchan=63,antfile="", \
+    def __init__(self, datafile, rcu_mode, subband=-1, nchan=63, npol=2, antfile="", \
                 start_time=None, direction=None, station_name=""):
 
         try:
@@ -385,7 +385,7 @@ class AARTFAACData (XCStationData):
         if datafile.split('.')[-1] != 'vis':
             nchan = 1
 
-        self.vis = vism.TransitVis (datafile, nant, subband, nchan, 'lba_outer')
+        self.vis = vism.TransitVis (datafile, nant, subband, nchan, npol, 'lba_outer')
         print '<-- Record size: ', self.vis.recsize, ' Bytes.'
 
 ##################### TODO: Units not matching, direction type can't be created
