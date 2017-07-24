@@ -385,6 +385,7 @@ class AARTFAACData (XCStationData):
         if datafile.split('.')[-1] != 'vis':
             nchan = 1
 
+        self._n_pol = npol;
         self.vis = vism.TransitVis (datafile, nant, subband, nchan, npol, 'lba_outer')
         print '<-- Record size: ', self.vis.recsize, ' Bytes.'
 
@@ -467,8 +468,27 @@ class AARTFAACData (XCStationData):
                 self.acm[self.trilind] = meanacm[:,1]
                 self.acm = self.acm.transpose()
                 self.acm[self.trilind] = np.conjugate (meanacm[:,1])
-                self._raw_data [ind, :,1,:,1] = self.acm  # YY pol
+                
+                if self.n_pol > 2: # This is XY pol, not YY
+                    self._raw_data [ind, :,0,:,1] = self.acm  # XY pol
     
+                    self.acm.fill(0)
+                    self.acm[self.trilind] = meanacm[:,2]
+                    self.acm = self.acm.transpose()
+                    self.acm[self.trilind] = np.conjugate (meanacm[:,2])
+                    self._raw_data [ind, :,1,:,0] = self.acm  # YX pol
+        
+                    self.acm.fill(0)
+    
+                    self.acm[self.trilind] = meanacm[:,3]
+                    self.acm = self.acm.transpose()
+                    self.acm[self.trilind] = np.conjugate (meanacm[:,3])
+                    self._raw_data [ind, :,1,:,1] = self.acm  # YY pol
+    
+                else:  # This is the YY pol for a 2-pol observation
+                    self._raw_data [ind, :,1,:,1] = self.acm  # XY pol
+                    
+
                 self._time.append (datetime_casacore.from_datetime 
                                                             (datafile.trec))
     
