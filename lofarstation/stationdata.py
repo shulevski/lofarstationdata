@@ -163,7 +163,9 @@ class XCStationData(object):
 
     @property
     def n_pol_out(self):
-        return self.n_pol ** 2
+        # return self.n_pol ** 2
+        # Edit by Peeyush, 24Jul17, since all generated MS. are expected to have 4 pols.
+        return 2 ** 2 
 
     @property
     def n_ant(self):
@@ -434,8 +436,11 @@ class AARTFAACData (XCStationData):
         ind = 0
         self.datafile = datafile.fname
         print '<-- Writing out ', datafile.nrec, 'records to MS.'
-        self._raw_data = np.zeros ( (datafile.nrec, self.n_ant, self.n_pol, \
-                                self.n_ant, self.n_pol), dtype=np.complex64)
+
+        # NOTE: Regardless of the number of specified polarisations, we 
+        # allocate space for the max. 4 pols available.
+        self._raw_data = np.zeros ( (datafile.nrec, self.n_ant, 2, \
+                                self.n_ant, 2), dtype=np.complex64)
 
         # NOTE:The time list is also populated here, making _set_time a no-op.
         self._time = []
