@@ -234,8 +234,14 @@ class XCStationData(object):
         w_shape.insert(4,1)
         w = self.uvw[:,:,:,2].reshape(w_shape)
         phase = np.empty(shape=w.shape, dtype=np.complex128)
-        for i, wl in enumerate(np.atleast_1d(self.wavelength.squeeze())):
-            phase[i] = np.exp(-2j * np.pi * w[i] / wl)
+        # for i, wl in enumerate(np.atleast_1d(self.wavelength.squeeze())):
+        #     phase[i] = np.exp(-2j * np.pi * w[i] / wl)
+        
+        # We assume that there is only a single frequency in the dataset.
+        # In the future, if multiple subbands are to be supported, they should
+        # be accommodated as the 0th dimension of self.uvw (Which is now 
+        # the time axis). - Peeyush, 27Jul17
+        phase = np.exp(-2j * np.pi * w / self.wavelength)
         self._data = self.raw_data * phase
         self._data_valid = True
 
